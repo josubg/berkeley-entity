@@ -49,7 +49,7 @@ import edu.berkeley.nlp.futile.util.Logger;
  * in edu.berkeley.nlp.entity.ner.NerDriver to train NER mask models. Alternatively,
  * run this TRAIN_EVALUATE loop once and reuse the coarse models that come out of it.
  * 
- * You specify coarse model paths with pruningStrategy/nerPruningStrategy. The coref
+ * You specify coarse model paths_es with pruningStrategy/nerPruningStrategy. The coref
  * pruner (pruningStrategy) is specified as either:
  * 
  * models:path/to/models.ser.gz:threshold
@@ -102,7 +102,7 @@ public class Driver implements Runnable {
   @Option(gloss = "Which experiment to run?")
   public static Mode mode = Mode.PREDICT;
   @Option(gloss = "Language choice")
-  public static Language lang = Language.ENGLISH;
+  public static Language lang = Language.SPANISH;
   
   // DATA AND PATHS
   @Option(gloss = "Path to training set")
@@ -141,7 +141,7 @@ public class Driver implements Runnable {
   @Option(gloss = "Use gold mentions.")
   public static boolean useGoldMentions = false;
   @Option(gloss = "Can toggle whether written output is filtered for singletons or not")
-  public static boolean doConllPostprocessing = true;
+  public static boolean doConllPostprocessing = false;
   @Option(gloss = "Include appositive mentions?")
   public static boolean includeAppositives = true;
   @Option(gloss = "Include spans contained in NEs? Helps mention recall but hurts precision, good overall")

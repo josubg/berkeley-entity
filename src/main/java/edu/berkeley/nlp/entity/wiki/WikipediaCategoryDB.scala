@@ -6,7 +6,6 @@ import scala.collection.JavaConverters._
 import edu.berkeley.nlp.futile.fig.basic.IOUtils
 import edu.berkeley.nlp.futile.util.Logger
 import edu.berkeley.nlp.futile.util.Counter
-import edu.berkeley.nlp.entity.wiki.BlikiInterface
 import edu.berkeley.nlp.PCFGLA.CoarseToFineMaxRuleParser
 import edu.berkeley.nlp.entity.preprocess.Reprocessor
 import edu.berkeley.nlp.entity.preprocess.PreprocessingDriver

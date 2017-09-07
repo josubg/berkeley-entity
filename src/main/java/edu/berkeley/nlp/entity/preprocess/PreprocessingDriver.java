@@ -129,7 +129,7 @@ public class PreprocessingDriver implements Runnable {
         }
         writer.close();
       } else {
-        ConllDocReader docReader = new ConllDocReader(Language.ENGLISH, "");
+        ConllDocReader docReader = new ConllDocReader(Language.SPANISH, "");
         for (File inputFile : new File(inputDir).listFiles()) {
           Reprocessor.redoConllDocument(parser, backoffParser, nerSystem, docReader, inputDir + "/" + inputFile.getName(), outputDir + "/" + inputFile.getName());
         }

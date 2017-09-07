@@ -223,6 +223,13 @@ object EntitySystem {
   }
   
   def runTrainEvaluate(trainPath: String, trainSize: Int, testPath: String, testSize: Int) = {
+    if (Driver.wikipediaPath == ""){
+      Logger.logss("NO wikipedia");
+    }
+    Logger.logss("Wikipath:" + Driver.wikipediaPath);
+    Logger.logss("Language: " + Driver.lang );
+    Logger.logss("Brown path:" + Driver.brownPath );
+
     // Resources needed for document assembly: number/gender computer, NER marginals, coref models and mapping of documents to folds
     val numberGenderComputer = NumberGenderComputer.readBergsmaLinData(Driver.numberGenderDataPath);
     val mentionPropertyComputer = new MentionPropertyComputer(Some(numberGenderComputer));
@@ -241,7 +248,7 @@ object EntitySystem {
     val nerFeaturizer = NerFeaturizer(Driver.nerFeatureSet.split("\\+").toSet, featureIndexer, NerSystemLabeled.StdLabelIndexer, jointDocs.flatMap(_.rawDoc.words), None, maybeBrownClusters);
     val jointFeaturizer = buildFeaturizerShared(jointDocs.map(_.docGraph.corefDoc), featureIndexer, nerFeaturizer, maybeBrownClusters);
     val maybeWikipediaInterface: Option[WikipediaInterface] = if (Driver.wikipediaPath != "") Some(GUtil.load(Driver.wikipediaPath).asInstanceOf[WikipediaInterface]) else None;
-    
+
     
     ///////////////////////
     val fgfOnto = new FactorGraphFactoryOnto(jointFeaturizer, maybeWikipediaInterface);
@@ -277,7 +284,7 @@ object EntitySystem {
                                     wikiPath: String,
                                     train: Boolean) = {
     // Read in raw data
-    val rawDocs = ConllDocReader.loadRawConllDocsWithSuffix(path, size, "", Language.ENGLISH);
+    val rawDocs = ConllDocReader.loadRawConllDocsWithSuffix(path, size, "", Language.SPANISH);
     val goldWikification: CorpusWikiAnnots = if (wikiPath != "") {
       val corpusAnnots = new CorpusWikiAnnots;
       for (entry <- WikiAnnotReaderWriter.readAllStandoffAnnots(wikiPath)) {
@@ -321,7 +328,7 @@ object EntitySystem {
   }
   
   def preprocessACEDocsForDecode(path: String, size: Int, suffix: String, mentionPropertyComputer: MentionPropertyComputer, corefPruner: CorefPruner) = {
-    val rawDocs = ConllDocReader.loadRawConllDocsWithSuffix(path, size, suffix, Language.ENGLISH);
+    val rawDocs = ConllDocReader.loadRawConllDocsWithSuffix(path, size, suffix, Language.SPANISH);
     val assembler = CorefDocAssembler(Driver.lang, Driver.useGoldMentions);
     val corefDocs = rawDocs.map(doc => assembler.createCorefDoc(doc, mentionPropertyComputer));
     val docGraphs = corefDocs.map(new DocumentGraph(_, false));

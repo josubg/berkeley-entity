@@ -2,80 +2,112 @@ package edu.berkeley.nlp.entity.coref
 import scala.collection.mutable.HashMap
 
 object PronounDictionary {
-  val firstPersonPronouns = Set("i", "me", "myself", "mine", "my", "we", "us", "ourself", "ourselves", "ours", "our");
-  val secondPersonPronouns = Set("you", "yourself", "yours", "your", "yourselves");
-  val thirdPersonPronouns = Set("he", "him", "himself", "his", "she", "her", "herself", "hers", "her", "it", "itself", "its", "one", "oneself", "one's", "they", "them", "themself", "themselves", "theirs", "their", "they", "them", "'em", "themselves");
-  val otherPronouns = Set("who", "whom", "whose", "where", "when","which");
+  val firstPersonPronouns = Set("conmigo", "me", "me", "mía", "mías", "mí", "mío", "mío", "míos", "nos", "nos", "nosotras",
+                                                             "nosotros", "nuestra", "nuestras", "nuestro", "nuestro", "nuestros", "yo");
+  val secondPersonPronouns = Set("contigo", "os", "os", "te", "te", "ti", "tú", "tuyas", "tuya", "tuyos", "tuyo", "tuyo",
+                                                               "ustedes", "usted", "vosotras", "vosotros", "vos", "vuestras", "vuestra", "vuestros",
+                                                               "vuestro", "vuestro");
+  val thirdPersonPronouns = Set("consigo", "él", "ella", "ellas", "ellos", "la", "las", "le", "les", "lo", "lo", "los",
+                                                             "se", "se", "sí", "suyas", "suya", "suyos", "suyo", "suyo");
+  val otherPronouns = Set("algo", "alguien", "alguna", "algunas", "alguno", "algunos", "ambas", "ambos", "bastante",
+                                                     "bastantes", "cual", "cualesquiera", "cualquiera", "demás", "demasiada", "demasiadas",
+                                                     "demasiado", "demasiados", "media", "medias", "medio", "medios", "misma", "mismas", "mismo",
+                                                     "mismos", "mucha", "muchas", "mucho", "muchos", "nada", "nadie", "naide", "ninguna",
+                                                     "ningunas", "ninguno", "ningunos", "otra", "otras", "otro", "otros", "poca", "pocas", "poco",
+                                                     "pocos", "quienesquiera", "quienquiera", "tantas", "tanta", "tantos", "tanto", "todas",
+                                                     "toda", "todos", "unas", "una", "unos", "uno", "varias", "varios", "todo");
   
-  val demonstratives = Set("this", "that", "these", "those");
+  val demonstratives = Set("este", "ese","aquel", "esta", "esa", "aquella", "estos", "esos", "aquellos", "estas", "esas", "aquellas");
   
   // Borrowed from Stanford
-  val singularPronouns = Set("i", "me", "myself", "mine", "my", "yourself", "he", "him", "himself", "his", "she", "her", "herself", "hers", "her", "it", "itself", "its", "one", "oneself", "one's");
-  val pluralPronouns = Set("we", "us", "ourself", "ourselves", "ours", "our", "yourself", "yourselves", "they", "them", "themself", "themselves", "theirs", "their");
-  val malePronouns = Set("he", "him", "himself", "his");
-  val femalePronouns = Set("her", "hers", "herself", "she");
-  val neutralPronouns = Set("it", "its", "itself", "where", "here", "there", "which");
+  val singularPronouns = Set("conmigo", "contigo", "él", "ella", "la", "le", "lo", "me", "mía", "mí", "mío", "nuestra",
+                                                      "nuestro", "nuestro", "suya", "suyo", "suyo", "te", "ti", "tú", "tuya", "tuyo", "tuyo",
+                                                      "usted", "vos", "vuestra", "vuestro", "vuestro", "yo");
+  val pluralPronouns = Set("ellas", "ellos", "las", "les", "los", "mías", "míos", "nos", "nosotras", "nosotros", "nuestras",
+                                                  "nuestros", "os", "suyas", "suyos", "tuyas", "tuyos", "ustedes", "vosotras", "vosotros",
+                                                  "vuestras", "vuestros");
+  val malePronouns = Set("él", "ellos", "lo", "los", "mío", "míos", "nosotros", "nuestro", "nuestros", "suyos", "suyo",
+                                              "tuyos", "tuyo", "vosotros", "vuestros", "vuestro");
+  val femalePronouns = Set("ella", "ellas", "la", "las", "mía", "mías", "nosotras", "nuestra", "nuestras", "suyas", "suya",
+                                                  "tuyas", "tuya", "vosotras", "vuestras", "vuestra");
+  val neutralPronouns = Set("conmigo", "consigo", "contigo", "le", "les", "lo", "me", "mía", "mío", "nos", "nuestro", "os",
+                                                    "se", "sí", "suyo", "te", "ti", "tú", "tuyo", "ustedes", "usted", "vos", "vuestro", "yo");
   
   
   val allPronouns = firstPersonPronouns ++ secondPersonPronouns ++ thirdPersonPronouns ++ otherPronouns;
 
-  // Constructed based on Stanford's Dictionaries class
+  // Constructed based on Stanford"s Dictionaries class
   val canonicalizations = new HashMap[String,String]();
-  canonicalizations.put("i", "i");
-  canonicalizations.put("me", "i");
-  canonicalizations.put("my", "i");
-  canonicalizations.put("myself", "i");
-  canonicalizations.put("mine", "i");
-  canonicalizations.put("you", "you");
-  canonicalizations.put("your", "you");
-  canonicalizations.put("yourself", "you");
-  canonicalizations.put("yourselves", "you");
-  canonicalizations.put("yours", "you");
-  canonicalizations.put("he", "he");
-  canonicalizations.put("him", "he");
-  canonicalizations.put("his", "he");
-  canonicalizations.put("himself", "he");
-  canonicalizations.put("she", "she");
-  canonicalizations.put("her", "she");
-  canonicalizations.put("herself", "she");
-  canonicalizations.put("hers", "she");
-  
-  canonicalizations.put("we", "we");
-  canonicalizations.put("us", "we");
-  canonicalizations.put("our", "we");
-  canonicalizations.put("ourself", "we");
-  canonicalizations.put("ourselves", "we");
-  canonicalizations.put("ours", "we");
-  canonicalizations.put("they", "they");
-  canonicalizations.put("them", "they");
-  canonicalizations.put("their", "they");
-  canonicalizations.put("themself", "they");
-  canonicalizations.put("themselves", "they");
-  canonicalizations.put("theirs", "they");
-  canonicalizations.put("'em", "they");
-  canonicalizations.put("it", "it");
-  canonicalizations.put("itself", "it");
-  canonicalizations.put("its", "it");
-  canonicalizations.put("one", "one");
-  canonicalizations.put("oneself", "one");
-  canonicalizations.put("one's", "one");
-  
-  canonicalizations.put("this", "this");
-  canonicalizations.put("that", "that");
-  canonicalizations.put("these", "these");
-  canonicalizations.put("those", "those");
-  canonicalizations.put("which", "which");
-  canonicalizations.put("who", "who");
-  canonicalizations.put("whom", "who");
-//  canonicalizations.put("where", "where");
-//  canonicalizations.put("whose", "whose");
+  var forms = Set("conmigo", "me", "me", "mía", "mías", "mí", "mío", "mío", "míos, yo")
+  for( x <- forms ){
+   canonicalizations.put(x, "i");
+  }
+
+  forms = Set("nos", "nos", "nosotras", "nosotros", "nuestra", "nuestras", "nuestro", "nuestro", "nuestros")
+  for( x <- forms ){
+      canonicalizations.put(x, "we");
+  }
+  forms = Set("contigo", "os", "os", "te", "te", "ti", "tú", "tuyas", "tuya", "tuyos", "tuyo", "tuyo",
+       "ustedes", "usted", "vosotras", "vosotros", "vos", "vuestras", "vuestra", "vuestros", "vuestro", "vuestro")
+  for( x <- forms ){
+      canonicalizations.put(x, "you");
+  }
+  var x = 0;
+  forms = Set("él", "suyo")
+  for( x <- forms ){
+    canonicalizations.put(x, "he");
+  }
+  forms = Set("ella", "la", "suya")
+  for( x <- forms ){
+     canonicalizations.put(x, "she");
+  }
+
+  forms = Set("ellas", "ellos", "las", "les", "los", "suyas","suyos")
+  for( x <- forms ){
+     canonicalizations.put(x, "they");
+  }
+
+  forms = Set("lo")
+  for( x <- forms ){
+     canonicalizations.put(x, "it");
+  }
+
+  forms = Set("esto", "este", "esta")
+  for( x <- forms ){
+       canonicalizations.put(x, "this");
+  }
+
+  forms = Set("eso", "ese", "esa","aquello", "aquella", "aquel")
+  for( x <- forms ){
+      canonicalizations.put(x, "that");
+  }
+  forms = Set("estas", "estos")
+  for( x <- forms ){
+      canonicalizations.put(x, "these");
+  }
+  forms = Set("esos", "esas","aquellos", "aquellas")
+  for( x <- forms ){
+      canonicalizations.put(x, "those");
+  }
+  forms = Set("cual", "cuales")
+  for( x <- forms ){
+        canonicalizations.put(x, "which");
+  }
+  forms = Set("quien", "quienes")
+  for( x <- forms ){
+        canonicalizations.put(x, "who");
+  }
+
+
+  //canonicalizations.put("donde", "where");
+  //canonicalizations.put("cuyos", "whose");
   // This entry is here just to make results consistent with earlier ones
   // on our very small dev set
-  canonicalizations.put("thy", "thy");
-  canonicalizations.put("y'all", "you");
-  canonicalizations.put("you're", "you");
-  canonicalizations.put("you'll", "you");
-  canonicalizations.put("'s", "'s");
+  //canonicalizations.put("thy", "thy");
+  //canonicalizations.put("y'all", "you");
+  //canonicalizations.put("you're", "you");
+  //canonicalizations.put("you'll", "you");
+  //canonicalizations.put("'s", "'s");
   
   def isPronLc(str: String): Boolean = {
     !mightBeAcronym(str) && allPronouns.contains(str.toLowerCase());

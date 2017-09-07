@@ -8,6 +8,7 @@ import scala.collection.mutable.HashMap
 import edu.berkeley.nlp.entity.lang.Language
 import edu.berkeley.nlp.entity.lang.ModArabicHeadFinder
 import edu.berkeley.nlp.entity.lang.ModCollinsHeadFinder
+import edu.berkeley.nlp.entity.lang.ModSpanishHeadFinder
 import edu.berkeley.nlp.futile.ling.BikelChineseHeadFinder
 import edu.berkeley.nlp.futile.syntax.Trees.PennTreeRenderer
 import edu.berkeley.nlp.futile.syntax.Tree
@@ -30,11 +31,12 @@ class ConllDocReader(val lang: Language,
     }
     betterParses;
   }
-  
+  Logger.logss("Selected lang:\n" + lang);
   val headFinder = lang match {
     case Language.ENGLISH => new ModCollinsHeadFinder();
     case Language.CHINESE => new BikelChineseHeadFinder();
     case Language.ARABIC => new ModArabicHeadFinder();
+    case Language.SPANISH => new ModSpanishHeadFinder();
     case _ => throw new RuntimeException("Bad language, no head finder for " + lang);
   }
   
@@ -337,7 +339,7 @@ object ConllDocReader {
     rawFiles.filter(file => file.getAbsolutePath.endsWith(suffix));
   }
   
-  def loadRawConllDocsWithSuffix(path: String, size: Int, suffix: String, lang: Language = Language.ENGLISH, betterParsesFile: String = ""): Seq[ConllDoc] = {
+  def loadRawConllDocsWithSuffix(path: String, size: Int, suffix: String, lang: Language = Language.SPANISH, betterParsesFile: String = ""): Seq[ConllDoc] = {
     Logger.logss("Loading " + size + " docs from " + path + " ending with " + suffix);
 //    val rawDir = new File(path);
 //    if (!rawDir.exists() || !rawDir.canRead() || rawDir.listFiles == null || rawDir.listFiles.isEmpty) {
@@ -360,7 +362,7 @@ object ConllDocReader {
     val numDocs = if (size == -1) docs.size else Math.min(size, files.size);
     Logger.logss(docs.size + " docs loaded from " + fileIdx + " files, retaining " + numDocs);
     if (docs.size == 0) {
-      Logger.logss("WARNING: Zero docs loaded...double check your paths unless you meant for this happen");
+      Logger.logss("WARNING: Zero docs loaded...double check your paths_es unless you meant for this happen");
     }
     docs.slice(0, numDocs);
   }
@@ -369,7 +371,7 @@ object ConllDocReader {
    * Same as loadRawConllDocsWithSuffix but applies a function to the documents as it
    * reads them and discards the documents; useful for dealing with large datasets
    */
-  def loadRawConllDocsWithSuffixProcessStreaming(path: String, size: Int, suffix: String, fcn: ConllDoc => Unit, lang: Language = Language.ENGLISH, betterParsesFile: String = "") = {
+  def loadRawConllDocsWithSuffixProcessStreaming(path: String, size: Int, suffix: String, fcn: ConllDoc => Unit, lang: Language = Language.SPANISH, betterParsesFile: String = "") = {
     Logger.logss("Processing " + size + " docs from " + path + " ending with " + suffix);
     val files = getFiles(path, suffix)
     val reader = new ConllDocReader(lang, betterParsesFile);
@@ -428,7 +430,7 @@ object ConllDocReader {
   }
   
   def testDoc(fileName: String) {
-    val reader = new ConllDocReader(Language.ENGLISH);
+    val reader = new ConllDocReader(Language.SPANISH);
     val conllDocs = reader.readConllDocs(fileName);
     conllDocs.foreach(conllDoc => {
       println(conllDoc.docID + " " + conllDoc.docPartNo)

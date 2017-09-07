@@ -10,6 +10,7 @@ import edu.berkeley.nlp.futile.util.Logger
 import edu.berkeley.nlp.entity.lang.EnglishCorefLanguagePack
 import edu.berkeley.nlp.entity.lang.ChineseCorefLanguagePack
 import edu.berkeley.nlp.entity.lang.ArabicCorefLanguagePack
+import edu.berkeley.nlp.entity.lang.SpanishCorefLanguagePack
 import edu.berkeley.nlp.futile.util.Counter
 import edu.berkeley.nlp.futile.syntax.Trees.PennTreeRenderer
 import edu.berkeley.nlp.entity.ConllDoc
@@ -437,6 +438,7 @@ object CorefDocAssembler {
       case Language.ENGLISH => new EnglishCorefLanguagePack();
       case Language.CHINESE => new ChineseCorefLanguagePack(); 
       case Language.ARABIC => new ArabicCorefLanguagePack();
+      case Language.SPANISH => new SpanishCorefLanguagePack();
       case _ => throw new RuntimeException("Unrecognized language");
     }
     new CorefDocAssembler(langPack, useGoldMentions);

@@ -23,7 +23,7 @@ object ConllDocSharder {
     LightRunner.populateScala(ConllDocSharder.getClass(), args)
     require(!inputFile.isEmpty && !outputDirectory.isEmpty)
     var tokens = 0
-    new ConllDocReader(Language.ENGLISH).readConllDocsProcessStreaming(inputFile, (doc: ConllDoc) => {
+    new ConllDocReader(Language.SPANISH).readConllDocsProcessStreaming(inputFile, (doc: ConllDoc) => {
       val outputName = outputDirectory + "/" + doc.docID
       val writer = IOUtils.openOutHard(outputName)
       tokens += doc.words.map(_.size).reduce(_ + _)

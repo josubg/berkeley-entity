@@ -259,7 +259,7 @@ object ConllDocWriter {
   }
   
   def convertToIllinoisColumnFormat(dataDir: String, outFile: String, shuffle: Boolean) {
-    val goldDocuments = ConllDocReader.loadRawConllDocsWithSuffix(dataDir, -1, "gold_conll", Language.ENGLISH);
+    val goldDocuments = ConllDocReader.loadRawConllDocsWithSuffix(dataDir, -1, "gold_conll", Language.SPANISH);
     val goldDocumentsShuffled = if (shuffle) new scala.util.Random(0).shuffle(goldDocuments) else goldDocuments
     val outWriter = IOUtils.openOutHard(outFile);
     for (doc <- goldDocumentsShuffled) {

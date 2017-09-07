@@ -308,15 +308,45 @@ object Mention {
       }
     } else {
       if (propertyComputer.maybeNumGendComputer.isDefined) {
-        number = propertyComputer.maybeNumGendComputer.get.computeNumber(rawDoc.words(sentIdx).slice(startIdx, endIdx), rawDoc.words(sentIdx)(headIdx));
-        gender = if (nerString == "PERSON") {
-          propertyComputer.maybeNumGendComputer.get.computeGenderPerson(rawDoc.words(sentIdx).slice(startIdx, endIdx), headIdx - startIdx);
+
+        number = pos_number(pos=rawDoc.pos(sentIdx)(headIdx))
+        //number = propertyComputer.maybeNumGendComputer.get.computeNumber(rawDoc.words(sentIdx).slice(startIdx, endIdx), rawDoc.words(sentIdx)(headIdx));
+        gender = if (nerString == "PERSON" && (headIdx -startIdx) > 0) {
+          val head_index = headIdx -startIdx
+          pos_gender_person(
+            head = rawDoc.words(sentIdx)(headIdx),
+            pre_head= rawDoc.words(sentIdx)(headIdx-1),
+            head_pos = rawDoc.pos(sentIdx)(headIdx),
+            pre_head_pos = rawDoc.pos(sentIdx)(headIdx-1))
+          //propertyComputer.maybeNumGendComputer.get.computeGenderPerson(rawDoc.words(sentIdx).slice(startIdx, endIdx), headIdx - startIdx);
         } else {
-          propertyComputer.maybeNumGendComputer.get.computeGenderNonPerson(rawDoc.words(sentIdx).slice(startIdx, endIdx), rawDoc.words(sentIdx)(headIdx));
+
+          pos_gender(pos=rawDoc.pos(sentIdx)(headIdx))
+          //propertyComputer.maybeNumGendComputer.get.computeGenderNonPerson(rawDoc.words(sentIdx).slice(startIdx, endIdx), rawDoc.words(sentIdx)(headIdx));
         }
       }
     }
     return new Mention(rawDoc, mentIdx, sentIdx, startIdx, endIdx, headIdx, allHeadIndices, isCoordinated, mentionType, nerString, number, gender);
+  }
+  def pos_number(pos:String): Number={
+    if (pos.matches("^[ADPS]...S|^N..S|^V....S")){Number.SINGULAR}
+    if (pos.matches("^[ADPS]...P|^N..P|^V....P")){Number.PLURAL}
+    Number.UNKNOWN
+  }
+  def pos_gender(pos:String): Gender={
+    if (pos.matches("^[ADPS]..M|^N.M|^V.....M")){Gender.MALE}
+    if (pos.matches("^[ADP]..F|^N.F|^V.....F")){Gender.FEMALE}
+    if (pos.matches("^[ADP]..N")){Gender.NEUTRAL}
+    Gender.UNKNOWN
+  }
+
+  def pos_gender_person(head:String, pre_head:String, head_pos:String, pre_head_pos:String): Gender={
+    if (head.charAt(0).isUpper){
+      if (pre_head.charAt(0).isLower) {
+        pos_gender(pre_head_pos)
+      }
+    }
+    pos_gender(head_pos)
   }
 }
 

@@ -106,80 +106,87 @@ object NumberGenderComputer {
    * because it loads every time the system runs.
    */
   def readBergsmaLinData(fileName: String): NumberGenderComputer = {
-    Logger.logss("Reading Bergsma and Lin file from " + fileName);
     val index = new Indexer[String];
     val numGendMap = new HashMap[BergsmaLinKey, Array[Int]]();
-    val reader = IOUtils.openInHard(fileName);
-    while (reader.ready()) {
-      val line = reader.readLine();
-      // Read the words and values, awkward and non-Scala-y to be
-      // faster.
-      var tokenEnd = findTokenEnd(line, line.size - 1);
-      var tokenStart = findTokenStart(line, tokenEnd)
-      // Read the four numbers at the end of the string
-      val vals = new Array[Int](4);
-      var i = 3;
-      while (i >= 0) {
-        vals(i) = readInt(line, tokenStart, tokenEnd);
-        tokenEnd = findTokenEnd(line, tokenStart - 1);
-        tokenStart = findTokenStart(line, tokenEnd);
-        i -= 1;
-      }
-      // Count the number of words so we can initialize the array with the correct size
-      val oldTokenEnd = tokenEnd;
-      val oldTokenStart = tokenStart;
-      var numWords = 0;
-      while (tokenStart > 0) {
+
+    
+    if (fileName.isEmpty()) {
+      Logger.logss("No Bergsma and Lin file");
+      new NumberGenderComputer(index, numGendMap);
+    } else {
+      Logger.logss("Reading Bergsma and Lin file from " + fileName);
+      val reader = IOUtils.openInHard(fileName);
+      while (reader.ready()) {
+        val line = reader.readLine();
+        // Read the words and values, awkward and non-Scala-y to be
+        // faster.
+        var tokenEnd = findTokenEnd(line, line.size - 1);
+        var tokenStart = findTokenStart(line, tokenEnd)
+        // Read the four numbers at the end of the string
+        val vals = new Array[Int](4);
+        var i = 3;
+        while (i >= 0) {
+          vals(i) = readInt(line, tokenStart, tokenEnd);
+          tokenEnd = findTokenEnd(line, tokenStart - 1);
+          tokenStart = findTokenStart(line, tokenEnd);
+          i -= 1;
+        }
+        // Count the number of words so we can initialize the array with the correct size
+        val oldTokenEnd = tokenEnd;
+        val oldTokenStart = tokenStart;
+        var numWords = 0;
+        while (tokenStart > 0) {
+          numWords += 1;
+          tokenEnd = findTokenEnd(line, tokenStart - 1);
+          tokenStart = findTokenStart(line, tokenEnd);
+        }
+        // Add one for the word starting at 0
         numWords += 1;
-        tokenEnd = findTokenEnd(line, tokenStart - 1);
-        tokenStart = findTokenStart(line, tokenEnd);
+        // Now go back and actually read the words themselves
+        val words = new Array[Int](numWords);
+        tokenEnd = oldTokenEnd;
+        tokenStart = oldTokenStart;
+        var idx = numWords - 1;
+        while (tokenStart > 0) {
+          words(idx) = index.getIndex(line.substring(tokenStart, tokenEnd + 1));
+          idx -= 1;
+          tokenEnd = findTokenEnd(line, tokenStart - 1);
+          tokenStart = findTokenStart(line, tokenEnd);
+        }
+        // Read the last word
+        words(0) = index.getIndex(line.substring(tokenStart, tokenEnd + 1));
+
+        // N.B. You can replace everything above with these 12 lines for only
+        // about a 30% slowdown (it's slower primarily because of the tokenization
+        // and duplicating the string when you do that).
+        //      val tokenized = line.split("\\s+");
+        //      val words = new Array[Int](tokenized.size - 4);
+        //      var i = 0;
+        //      while (i < tokenized.size - 4) {
+        //        words(i) = index.getIndex(tokenized(i));
+        //        i += 1;
+        //      }
+        //      val vals = new Array[Int](4);
+        //      vals(0) = tokenized(tokenized.size - 4).toInt;
+        //      vals(1) = tokenized(tokenized.size - 3).toInt;
+        //      vals(2) = tokenized(tokenized.size - 2).toInt;
+        //      vals(3) = tokenized(tokenized.size - 1).toInt;
+
+
+        //      Logger.logss(line + ": " + words.map(index.getObject(_)).toSeq + " " + vals.toSeq);
+        val blKey = new BergsmaLinKey(words);
+        // Duplicate entry (quite rare): just add the counts (usually one has much lower count anyway)
+        if (numGendMap.contains(blKey)) {
+          val currCounts = numGendMap(blKey);
+          numGendMap.put(blKey, (0 until vals.size).map(i => vals(i) + currCounts(i)).toArray);
+        } else {
+          numGendMap.put(blKey, vals);
+        }
       }
-      // Add one for the word starting at 0
-      numWords += 1;
-      // Now go back and actually read the words themselves
-      val words = new Array[Int](numWords);
-      tokenEnd = oldTokenEnd;
-      tokenStart = oldTokenStart;
-      var idx = numWords - 1;
-      while (tokenStart > 0) {
-        words(idx) = index.getIndex(line.substring(tokenStart, tokenEnd + 1));
-        idx -= 1;
-        tokenEnd = findTokenEnd(line, tokenStart - 1);
-        tokenStart = findTokenStart(line, tokenEnd);
-      }
-      // Read the last word
-      words(0) = index.getIndex(line.substring(tokenStart, tokenEnd + 1));
-      
-      // N.B. You can replace everything above with these 12 lines for only
-      // about a 30% slowdown (it's slower primarily because of the tokenization
-      // and duplicating the string when you do that).
-//      val tokenized = line.split("\\s+");
-//      val words = new Array[Int](tokenized.size - 4);
-//      var i = 0;
-//      while (i < tokenized.size - 4) {
-//        words(i) = index.getIndex(tokenized(i));
-//        i += 1;
-//      }
-//      val vals = new Array[Int](4);
-//      vals(0) = tokenized(tokenized.size - 4).toInt;
-//      vals(1) = tokenized(tokenized.size - 3).toInt;
-//      vals(2) = tokenized(tokenized.size - 2).toInt;
-//      vals(3) = tokenized(tokenized.size - 1).toInt;
-      
-      
-//      Logger.logss(line + ": " + words.map(index.getObject(_)).toSeq + " " + vals.toSeq);
-      val blKey = new BergsmaLinKey(words);
-      // Duplicate entry (quite rare): just add the counts (usually one has much lower count anyway)
-      if (numGendMap.contains(blKey)) {
-        val currCounts = numGendMap(blKey);
-        numGendMap.put(blKey, (0 until vals.size).map(i => vals(i) + currCounts(i)).toArray);
-      } else {
-        numGendMap.put(blKey, vals);
-      }
+      reader.close();
+      Logger.logss("Done!");
+      new NumberGenderComputer(index, numGendMap);
     }
-    reader.close();
-    Logger.logss("Done!");
-    new NumberGenderComputer(index, numGendMap);
   }
   
   /**

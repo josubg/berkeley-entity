@@ -12,7 +12,7 @@ object BootstrapDriverNER {
     val goldPath = args(0);
     val worseFilePath = args(1);
     val betterFilePath = args(2);
-    val goldDocs = ConllDocReader.loadRawConllDocsWithSuffix(goldPath, -1, "gold_conll", Language.ENGLISH);
+    val goldDocs = ConllDocReader.loadRawConllDocsWithSuffix(goldPath, -1, "gold_conll", Language.SPANISH);
 //    val sentences = goldDocs.flatMap(_.words)
 //    val worseChunks = NEEvaluator.readIllinoisNEROutput(worseFilePath, sentences)
 //    val betterChunks = NEEvaluator.readIllinoisNEROutput(betterFilePath, sentences)
